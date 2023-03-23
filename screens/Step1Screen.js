@@ -8,6 +8,13 @@ import { Button, MD3Colors, ProgressBar, TextInput } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 
 export default function Step1Screen({ navigation }) {
+  // keep back arrow from showing
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      headerLeft: () => null,
+    });
+  }, [navigation]);
+
   const {
     handleSubmit,
     control,
@@ -21,7 +28,6 @@ export default function Step1Screen({ navigation }) {
         s.progress = 0;
       });
 
-    console.log("updated state...", WizardStore.getRawState().progress);
   }, [isFocused]);
 
   const onSubmit = (data) => {
@@ -99,15 +105,6 @@ export default function Step1Screen({ navigation }) {
         >
           GOTO STEP TWO
         </Button>
-        <View>
-          <Text>
-            {JSON.stringify(
-              WizardStore.useState((s) => s),
-              null,
-              2
-            )}
-          </Text>
-        </View>
       </View>
     </View>
   );

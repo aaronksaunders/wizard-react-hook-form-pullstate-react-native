@@ -82,16 +82,6 @@ export default function Step2Screen({ navigation }) {
         >
           NEXT
         </Button>
-
-        <View>
-          <Text>
-            {JSON.stringify(
-              WizardStore.useState((s) => s),
-              null,
-              2
-            )}
-          </Text>
-        </View>
       </View>
     </View>
   );

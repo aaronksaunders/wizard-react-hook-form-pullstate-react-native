@@ -4,7 +4,7 @@ import Constants from "expo-constants";
 
 import { useForm, Controller } from "react-hook-form";
 import { WizardStore } from "../store";
-import { Button, Checkbox, MD3Colors, ProgressBar } from "react-native-paper";
+import { Button, Checkbox, MD3Colors, ProgressBar, Divider } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 
 export default function Step3Screen({ navigation }) {
@@ -89,6 +89,7 @@ export default function Step3Screen({ navigation }) {
             </Text>
           )}
         </View>
+        <Divider />
         <View style={styles.formEntry}>
           <Controller
             control={control}
@@ -123,6 +124,7 @@ export default function Step3Screen({ navigation }) {
             </Text>
           )}
         </View>
+        <Divider />
         <Button
           mode="outlined"
           style={[styles.button, { marginTop: 40 }]}
@@ -138,15 +140,6 @@ export default function Step3Screen({ navigation }) {
           NEXT
         </Button>
 
-        <View>
-          <Text>
-            {JSON.stringify(
-              WizardStore.useState((s) => s),
-              null,
-              2
-            )}
-          </Text>
-        </View>
       </View>
     </View>
   );
@@ -157,7 +150,7 @@ const styles = StyleSheet.create({
     margin: 8,
   },
   formEntry: {
-    margin: 8,
+    // margin: 8,
   },
   container: {
     flex: 1,

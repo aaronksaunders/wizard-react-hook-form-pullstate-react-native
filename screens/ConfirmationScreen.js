@@ -1,7 +1,14 @@
 import React from "react";
 import { View, Text, StyleSheet } from "react-native";
 import { WizardStore } from "../store";
-import { Button, MD3Colors, ProgressBar } from "react-native-paper";
+import {
+  Button,
+  MD3Colors,
+  ProgressBar,
+  Divider,
+  Portal,
+  Dialog,
+} from "react-native-paper";
 
 export default function ConfirmationScreen({ navigation }) {
   // keep back arrow from showing
@@ -10,6 +17,29 @@ export default function ConfirmationScreen({ navigation }) {
       headerLeft: () => null,
     });
   }, [navigation]);
+
+  const information = WizardStore.useState();
+
+  const [visible, setVisible] = React.useState(false);
+
+  const showDialog = () => setVisible(true);
+
+  const hideDialog = () => setVisible(false);
+
+  const clearAndReset = () => {
+    WizardStore.replace({
+      fullName: "",
+      age: "",
+      birthPlace: "",
+      maidenName: "",
+      termsAccepted: "",
+      privacyAccepted: "",
+      progress: 0,
+    });
+    setVisible(false);
+    navigation.replace("Step1");
+  };
+
   return (
     <View style={styles.container}>
       <ProgressBar
@@ -18,15 +48,41 @@ export default function ConfirmationScreen({ navigation }) {
         color={MD3Colors.primary60}
       />
       <View style={{ paddingHorizontal: 16 }}>
-        <View>
-          <Text>
-            {JSON.stringify(
-              WizardStore.useState((s) => s),
-              null,
-              2
-            )}
-          </Text>
-        </View>
+        {/* <!-- dialog --> */}
+        <Portal>
+          <Dialog visible={visible} onDismiss={hideDialog}>
+            <Dialog.Title>Alert</Dialog.Title>
+            <Dialog.Content>
+              <Text variant="bodyMedium">This is simple dialog</Text>
+            </Dialog.Content>
+            <Dialog.Actions>
+              <Button onPress={hideDialog}>Cancel</Button>
+              <Button onPress={clearAndReset}>Done</Button>
+            </Dialog.Actions>
+          </Dialog>
+        </Portal>
+
+        <SummaryEntry name={information.fullName} label={"Full Name"} />
+
+        <SummaryEntry name={information.age} label={"Age"} />
+
+        <SummaryEntry name={information.birthPlace} label={"Birth Place"} />
+
+        <SummaryEntry
+          name={information.maidenName}
+          label={"Mother's Maiden Name"}
+        />
+
+        <SummaryEntry
+          name={information.termsAccepted}
+          label={"Accepted User Terms"}
+        />
+
+        <SummaryEntry
+          name={information.privacyAccepted}
+          label={"Accepted User Privacy Policy"}
+        />
+
         <Button
           style={styles.button}
           mode="outlined"
@@ -37,7 +93,7 @@ export default function ConfirmationScreen({ navigation }) {
         <Button
           style={styles.button}
           mode="outlined"
-          onPress={() => navigation.navigate("")}
+          onPress={() => setVisible(true)}
         >
           SAVE DATA
         </Button>
@@ -45,6 +101,16 @@ export default function ConfirmationScreen({ navigation }) {
     </View>
   );
 }
+
+export const SummaryEntry = ({ name, label }) => {
+  return (
+    <View style={{ marginBottom: 16 }}>
+      <Text style={{ marginBottom: 8, fontWeight: "700" }}>{label}</Text>
+      <Text style={{ marginBottom: 8 }}>{name}</Text>
+      <Divider />
+    </View>
+  );
+};
 
 const styles = StyleSheet.create({
   button: {
