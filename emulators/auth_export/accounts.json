@@ -1,1 +1,30 @@
-{"kind":"identitytoolkit#DownloadAccountResponse","users":[]}
+{
+  "kind": "identitytoolkit#DownloadAccountResponse",
+  "users": [
+    {
+      "localId": "AEaw27OV4O1LqKsTcH2AtorpK7Ql",
+      "lastLoginAt": "1679632062181",
+      "displayName": "aaronksaunders",
+      "photoUrl": "",
+      "emailVerified": false,
+      "email": "aaron@mail.com",
+      "salt": "fakeSalts6abgv6VYaTxc9jEqCXm",
+      "passwordHash": "fakeHash:salt=fakeSalts6abgv6VYaTxc9jEqCXm:password=password123",
+      "passwordUpdatedAt": 1679629872087,
+      "validSince": "1679629872",
+      "mfaInfo": [],
+      "createdAt": "1679629872087",
+      "providerUserInfo": [
+        {
+          "providerId": "password",
+          "email": "aaron@mail.com",
+          "federatedId": "aaron@mail.com",
+          "rawId": "aaron@mail.com",
+          "displayName": "aaronksaunders",
+          "photoUrl": ""
+        }
+      ],
+      "lastRefreshAt": "2023-03-24T04:27:42.181Z"
+    }
+  ]
+}
