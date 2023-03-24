@@ -3,25 +3,11 @@ import { Text, View, StyleSheet } from "react-native";
 import { Button, TextInput } from "react-native-paper";
 import { firebaseSignOut } from "../services/firebase-service";
 
-export default function HomeScreen({ navigation }) {
+export default function AboutScreen({ navigation }) {
   return (
     <View style={styles.container}>
       <View style={{ paddingHorizontal: 16, paddingTop: 42 }}>
-        <Text>HOME SCREEN</Text>
-        <Button
-          onPress={async () => await firebaseSignOut()}
-          mode="outlined"
-          style={styles.button}
-        >
-          SIGN OUT
-        </Button>
-        <Button
-          onPress={ () => navigation.navigate('About')}
-          mode="outlined"
-          style={styles.button}
-        >
-          ABOUT
-        </Button>
+        <Text>ABOUT SCREEN</Text>
       </View>
     </View>
   );

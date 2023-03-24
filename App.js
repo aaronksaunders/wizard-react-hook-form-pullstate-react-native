@@ -21,6 +21,10 @@ import ConfirmationScreen from "./screens/ConfirmationScreen";
 import LoginScreen from "./screens/LoginScreen";
 import HomeScreen from "./screens/HomeScreen";
 import { getAuth, onAuthStateChanged } from "firebase/auth/react-native";
+import PrivateStack from "./stacks/PrivateStack";
+import AboutScreen from "./screens/AboutScreen";
+import CreateAccountScreen from "./screens/CreateAccountScreen";
+import AuthStack from "./stacks/AuthStack";
 
 const Stack = createStackNavigator();
 
@@ -38,10 +42,15 @@ export default function App() {
       <NavigationContainer>
         <Stack.Navigator>
           {!user ? (
-            <Stack.Screen name="Login" component={LoginScreen} />
+            <Stack.Screen
+              name="Auth"
+              component={AuthStack}
+              options={{ headerShown: false }}
+            />
           ) : (
             <>
               <Stack.Screen name="Home" component={HomeScreen} />
+              <Stack.Screen name="About" component={AboutScreen} />
               <Stack.Screen name="Step1" component={Step1Screen} />
               <Stack.Screen name="Step2" component={Step2Screen} />
               <Stack.Screen name="Step3" component={Step3Screen} />

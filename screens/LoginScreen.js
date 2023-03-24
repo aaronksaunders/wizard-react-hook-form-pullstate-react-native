@@ -94,6 +94,13 @@ export default function LoginScreen({ navigation }) {
         >
           LOGIN
         </Button>
+        <Button
+          onPress={()=> navigation.navigate('CreateAccount')}
+          mode="outlined"
+          style={styles.button}
+        >
+          CREATE ACCOUNT
+        </Button>
       </View>
     </View>
   );
