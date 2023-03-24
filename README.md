@@ -9,3 +9,10 @@
 
 ### See the same app written in Ionic Framework
 - https://github.com/aaronksaunders/wizard-react-hook-form-pullstate-ionic
+
+
+
+https://github.com/tusbar/babel-plugin-dotenv-import
+
+
+npm install @react-native-async-storage/async-storage

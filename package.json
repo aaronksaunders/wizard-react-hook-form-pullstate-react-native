@@ -4,16 +4,22 @@
     "start": "expo st",
     "android": "expo start --android",
     "ios": "expo start --ios",
-    "web": "expo start --web"
+    "web": "expo start --web",
+    "export:emulators": "firebase emulators:export ./emulators",
+    "start:emulators": "firebase emulators:start --export-on-exit --import ./emulators"
   },
   "dependencies": {
     "@expo/vector-icons": "^13.0.0",
+    "@react-native-async-storage/async-storage": "^1.17.12",
     "@react-navigation/native": "*",
     "@react-navigation/stack": "*",
+    "babel-plugin-dotenv-import": "^3.0.1",
     "crypto": "1.0.1",
+    "dotenv": "^16.0.3",
     "expo": "~47.0.12",
     "expo-constants": "~14.0.2",
     "expo-status-bar": "~1.4.2",
+    "firebase": "^9.18.0",
     "pullstate": "^1.25.0",
     "react": "18.1.0",
     "react-hook-form": "^7.43.7",
