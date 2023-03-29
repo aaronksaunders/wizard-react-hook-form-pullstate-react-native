@@ -12,6 +12,9 @@ import {
   getFirestore,
   QueryDocumentSnapshot,
   setLogLevel,
+  setDoc,
+  doc,
+  getDoc,
 } from "firebase/firestore";
 import {
   connectAuthEmulator,
@@ -62,10 +65,32 @@ export const firebaseSignOut = async () => {
   return await signOut(getAuth());
 };
 
+export const firebaseSetUserInformation = async (userId, userInformation) => {
+  try {
+    const { password, progress, ...infoRest } = userInformation;
+    const docRef = doc(db, "user_profile", userId);
+    await setDoc(docRef, infoRest);
+    const docData = await getDoc(docRef);
+    console.log("firebaseSetUserInformation", {
+      ...docData.data(),
+      id: docData.id,
+    });
+    return { data: { ...docData.data(), id: docData.id } };
+  } catch (error) {
+    console.log("error firebaseSetUserInformation ", error);
+    return { error };
+  }
+};
+
 /**
  * creates user in database and adds display name
  */
-export const firebaseSignUp = async (email, password, displayName) => {
+export const firebaseSignUp = async (
+  email,
+  password,
+  displayName,
+  information
+) => {
   try {
     const resp = await createUserWithEmailAndPassword(
       getAuth(),
@@ -77,8 +102,17 @@ export const firebaseSignUp = async (email, password, displayName) => {
       displayName: displayName,
     });
 
-    return { data: resp.user };
+    // add information to user_profile collection
+    const setUserInfoResp = await firebaseSetUserInformation(
+      resp.user.uid,
+      information
+    );
+    console.log("setUserInfoResp", setUserInfoResp);
+    if (setUserInfoResp?.error) throw Error(setUserInfoResp?.error);
+
+    return { data: setUserInfoResp?.data };
   } catch (error) {
+    console.log(error);
     return { error };
   }
 
@@ -100,4 +134,13 @@ export const firebaseSignIn = async (email, password) => {
   } catch (error) {
     return { error };
   }
+};
+
+/**
+ *
+ */
+export const firebaseGetCurrentUserProfile = async () => {
+  const docRef = doc(db, "user_profile", getAuth().currentUser.uid);
+  const docData = await getDoc(docRef);
+  return { ...docData?.data(), id: docData.id };
 };

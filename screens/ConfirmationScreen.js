@@ -9,6 +9,10 @@ import {
   Portal,
   Dialog,
 } from "react-native-paper";
+import {
+  firebaseSetUserInformation,
+  firebaseSignUp,
+} from "../services/firebase-service";
 
 export default function ConfirmationScreen({ navigation }) {
   // keep back arrow from showing
@@ -20,24 +24,46 @@ export default function ConfirmationScreen({ navigation }) {
 
   const information = WizardStore.useState();
 
-  const [visible, setVisible] = React.useState(false);
+  const [alertInfo, setAlertInfo] = React.useState({ visible: false });
 
-  const showDialog = () => setVisible(true);
-
-  const hideDialog = () => setVisible(false);
+  const hideDialog = () => setAlertInfo({ visible: false });
 
   const clearAndReset = () => {
     WizardStore.replace({
       fullName: "",
-      age: "",
+      birthdate: "",
       birthPlace: "",
       maidenName: "",
       termsAccepted: "",
       privacyAccepted: "",
+      email: "",
+      password: "",
       progress: 0,
     });
-    setVisible(false);
-    navigation.replace("Step1");
+    // setAlertInfo({ visible: false });
+    // navigation.replace("Step1");
+  };
+
+  const doCreateAccount = async () => {
+    try {
+      const signUpResp = await firebaseSignUp(
+        information.email,
+        information.password,
+        information.fullName,
+        information
+      );
+      if (signUpResp.error) throw Error(signUpResp.error);
+      clearAndReset();
+
+      setAlertInfo({
+        visible: true,
+        header: "Success",
+        message: "Account Created",
+      });
+    } catch (error) {
+      console.error("doCreateAccount", error);
+      setAlertInfo({ visible: true, header: "Error", message: error?.message });
+    }
   };
 
   return (
@@ -50,21 +76,23 @@ export default function ConfirmationScreen({ navigation }) {
       <View style={{ paddingHorizontal: 16 }}>
         {/* <!-- dialog --> */}
         <Portal>
-          <Dialog visible={visible} onDismiss={hideDialog}>
-            <Dialog.Title>Alert</Dialog.Title>
+          <Dialog visible={alertInfo.visible}>
+            <Dialog.Title>{alertInfo?.title}</Dialog.Title>
             <Dialog.Content>
-              <Text variant="bodyMedium">This is simple dialog</Text>
+              <Text variant="bodyMedium">{alertInfo?.message}</Text>
             </Dialog.Content>
             <Dialog.Actions>
-              <Button onPress={hideDialog}>Cancel</Button>
-              <Button onPress={clearAndReset}>Done</Button>
+              {/* <Button onPress={hideDialog}>Cancel</Button> */}
+              <Button onPress={() => clearAndReset()}>Done</Button>
             </Dialog.Actions>
           </Dialog>
         </Portal>
 
         <SummaryEntry name={information.fullName} label={"Full Name"} />
 
-        <SummaryEntry name={information.age} label={"Age"} />
+        <SummaryEntry name={information.email} label={"Email"} />
+
+        <SummaryEntry name={information.birthdate} label={"Birthdate"} />
 
         <SummaryEntry name={information.birthPlace} label={"Birth Place"} />
 
@@ -93,9 +121,9 @@ export default function ConfirmationScreen({ navigation }) {
         <Button
           style={styles.button}
           mode="outlined"
-          onPress={() => setVisible(true)}
+          onPress={() => doCreateAccount()}
         >
-          SAVE DATA
+          CREATE ACCOUNT
         </Button>
       </View>
     </View>

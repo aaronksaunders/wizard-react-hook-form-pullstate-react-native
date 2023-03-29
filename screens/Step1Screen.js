@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { Text, View, StyleSheet, Alert } from "react-native";
 import Constants from "expo-constants";
 
@@ -6,6 +6,8 @@ import { SubmitHandler, useForm, Controller } from "react-hook-form";
 import { WizardStore } from "../store";
 import { Button, MD3Colors, ProgressBar, TextInput } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
+import { RHFTextInput } from "./RHFTextInput";
+import DateTimePickerModal from "react-native-modal-datetime-picker";
 
 export default function Step1Screen({ navigation }) {
   // keep back arrow from showing
@@ -15,9 +17,16 @@ export default function Step1Screen({ navigation }) {
     });
   }, [navigation]);
 
+  const [date, setDate] = useState(new Date());
+  const [open, setOpen] = useState(false);
+
   const {
     handleSubmit,
     control,
+    setValue,
+    trigger,
+    getValues,
+    register,
     formState: { errors },
   } = useForm({ defaultValues: WizardStore.useState((s) => s) });
   const isFocused = useIsFocused();
@@ -27,14 +36,17 @@ export default function Step1Screen({ navigation }) {
       WizardStore.update((s) => {
         s.progress = 0;
       });
-
   }, [isFocused]);
+
+  console.log(getValues())
 
   const onSubmit = (data) => {
     WizardStore.update((s) => {
       s.progress = 33;
       s.fullName = data.fullName;
-      s.age = data.age;
+      s.birthdate = data.birthdate;
+      s.email = data.email;
+      s.password = data.password;
     });
     navigation.navigate("Step2");
   };
@@ -72,6 +84,40 @@ export default function Step1Screen({ navigation }) {
           )}
         </View>
 
+        {/* <!-- email --> */}
+        <RHFTextInput
+          control={control}
+          errors={errors}
+          rules={{
+            required: true,
+            validate: (value) =>
+              /^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+                value
+              ) || "Invalid Email Address",
+          }}
+          inputProps={{
+            type: "email",
+            label: "Email",
+            placeholder: "Email Address",
+            name: "email",
+            autoCapitalize: false,
+          }}
+        />
+
+        {/* <!-- password --> */}
+        <RHFTextInput
+          control={control}
+          errors={errors}
+          rules={{ required: true }}
+          inputProps={{
+            textContentType: "password",
+            secureTextEntry: true,
+            label: "Password",
+            placeholder: "Password",
+            name: "password",
+          }}
+        />
+
         <View style={[styles.formEntry]}>
           <Controller
             control={control}
@@ -81,22 +127,37 @@ export default function Step1Screen({ navigation }) {
             render={({ field: { onChange, onBlur, value } }) => (
               <TextInput
                 mode="outlined"
-                label="Age"
-                placeholder="Enter Age"
+                label="Birthdate"
+                placeholder="Enter Birth Date"
                 onBlur={onBlur}
-                onChangeText={onChange}
+                // onChangeText={onChange}
                 value={value}
-                keyboardType="numeric"
+                right={
+                  <TextInput.Icon
+                    icon="calendar"
+                    onPress={() => setOpen(true)}
+                  />
+                }
               />
             )}
-            name="age"
+            name="birthdate"
           />
-          {errors.age && (
+          {errors.birthdate && (
             <Text style={{ margin: 8, marginLeft: 16, color: "red" }}>
               This is a required field.
             </Text>
           )}
         </View>
+
+          <DateTimePickerModal
+            isVisible={open}
+            mode="date"
+            onConfirm={(date) => {
+              setValue('birthdate', date.toLocaleDateString()), {shouldTouch : true};
+              setOpen(false);
+            }}
+            onCancel={() => setOpen(false)}
+          />
 
         <Button
           onPress={handleSubmit(onSubmit)}

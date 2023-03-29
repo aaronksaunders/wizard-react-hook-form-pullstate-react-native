@@ -1,11 +1,12 @@
 import React, { useEffect } from "react";
-import { Text, View, StyleSheet } from "react-native";
+import { View, StyleSheet } from "react-native";
 import Constants from "expo-constants";
 
-import { useForm, Controller } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import { WizardStore } from "../store";
-import { Button, MD3Colors, ProgressBar, TextInput } from "react-native-paper";
+import { Button, MD3Colors, ProgressBar } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
+import { RHFTextInput } from "./RHFTextInput";
 
 export default function Step2Screen({ navigation }) {
   // keep back arrow from showing
@@ -87,7 +88,7 @@ export default function Step2Screen({ navigation }) {
   );
 }
 
-const styles = StyleSheet.create({
+export const styles = StyleSheet.create({
   button: {
     margin: 8,
   },
@@ -101,31 +102,4 @@ const styles = StyleSheet.create({
     marginBottom: 16,
   },
 });
-function RHFTextInput({ control, errors, inputProps }) {
-  return (
-    <View style={styles.formEntry}>
-      <Controller
-        control={control}
-        rules={{
-          required: true,
-        }}
-        render={({ field: { onChange, onBlur, value } }) => (
-          <TextInput
-            mode="outlined"
-            label={inputProps.label}
-            placeholder={inputProps.placeholder}
-            onBlur={onBlur}
-            onChangeText={onChange}
-            value={value}
-          />
-        )}
-        name={inputProps.name}
-      />
-      {errors[`${inputProps.name}`] && (
-        <Text style={{ margin: 8, marginLeft: 16, color: "red" }}>
-          This is a required field.
-        </Text>
-      )}
-    </View>
-  );
-}
+

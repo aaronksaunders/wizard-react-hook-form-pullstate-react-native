@@ -25,6 +25,7 @@ import PrivateStack from "./stacks/PrivateStack";
 import AboutScreen from "./screens/AboutScreen";
 import CreateAccountScreen from "./screens/CreateAccountScreen";
 import AuthStack from "./stacks/AuthStack";
+import { AuthStore } from "./store";
 
 const Stack = createStackNavigator();
 
@@ -34,6 +35,8 @@ export default function App() {
   React.useEffect(() => {
     onAuthStateChanged(getAuth(), (currentUser) => {
       setUser(currentUser);
+
+      AuthStore.update(s =>{ s.user = getAuth().currentUser });
     });
   }, []);
 
