@@ -1,5 +1,5 @@
 import * as React from "react";
-import { StyleSheet } from "react-native";
+import { Appearance, StyleSheet } from "react-native";
 import Constants from "expo-constants";
 
 // You can import from local files
@@ -8,6 +8,8 @@ import Constants from "expo-constants";
 import {
   ProgressBar,
   MD3Colors,
+  MD3LightTheme as DefaultTheme,
+  MD3DarkTheme,
   Provider as PaperProvider,
 } from "react-native-paper";
 
@@ -32,17 +34,35 @@ const Stack = createStackNavigator();
 export default function App() {
   const [user, setUser] = React.useState(null);
 
+  const colorScheme = Appearance.getColorScheme();
+  console.log(colorScheme);
+  if (colorScheme === "dark") {
+    // Use dark color scheme
+  }
+
   React.useEffect(() => {
     onAuthStateChanged(getAuth(), (currentUser) => {
       setUser(currentUser);
 
-      AuthStore.update(s =>{ s.user = getAuth().currentUser });
+      AuthStore.update((s) => {
+        s.user = getAuth().currentUser;
+      });
     });
   }, []);
 
+  AuthStore.update((s) => {
+    s.appTheme =
+      colorScheme === "dark"
+        ? {
+            ...MD3DarkTheme,
+            dark: true,
+          }
+        : DefaultTheme;
+  });
+
   return (
-    <PaperProvider>
-      <NavigationContainer>
+    <PaperProvider theme={AuthStore.getRawState().appTheme}>
+      <NavigationContainer theme={AuthStore.getRawState().appTheme}>
         <Stack.Navigator>
           {!user ? (
             <Stack.Screen
@@ -74,7 +94,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     paddingTop: Constants.statusBarHeight,
-    backgroundColor: "#ecf0f1",
+    // backgroundColor: "#ecf0f1",
     padding: 8,
   },
   paragraph: {

@@ -5,7 +5,6 @@ import {
   Button,
   MD3Colors,
   ProgressBar,
-  Divider,
   Portal,
   Dialog,
 } from "react-native-paper";
@@ -13,6 +12,7 @@ import {
   firebaseSetUserInformation,
   firebaseSignUp,
 } from "../services/firebase-service";
+import { SummaryEntry } from "./SummaryEntry";
 
 export default function ConfirmationScreen({ navigation }) {
   // keep back arrow from showing
@@ -129,16 +129,6 @@ export default function ConfirmationScreen({ navigation }) {
     </View>
   );
 }
-
-export const SummaryEntry = ({ name, label }) => {
-  return (
-    <View style={{ marginBottom: 16 }}>
-      <Text style={{ marginBottom: 8, fontWeight: "700" }}>{label}</Text>
-      <Text style={{ marginBottom: 8 }}>{name}</Text>
-      <Divider />
-    </View>
-  );
-};
 
 const styles = StyleSheet.create({
   button: {

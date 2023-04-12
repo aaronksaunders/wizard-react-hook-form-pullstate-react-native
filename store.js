@@ -17,6 +17,7 @@ export const AuthStore = new Store({
   user: null,
   userProfile: null,
   isLoggedIn : false,
+  photoInfo : {}
 });
 
 /**

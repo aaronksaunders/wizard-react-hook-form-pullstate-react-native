@@ -56,7 +56,7 @@ export default function LoginScreen({ navigation }) {
             <Button
               mode="contained"
               size="small"
-              style={{width:70}}
+              style={{ width: 70 }}
               onPress={() => setAlertInfo({ visible: false })}
             >
               Ok
