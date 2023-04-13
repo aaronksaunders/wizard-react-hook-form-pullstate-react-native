@@ -6,6 +6,8 @@
 - React Hook Form, Form Validation - https://react-hook-form.com/get-started/#ReactNative
 - PullState, State Management - https://lostpebble.github.io/pullstate/
 - Date Picker - https://github.com/mmazzarolo/react-native-modal-datetime-picker
+- Camera - https://docs.expo.dev/versions/latest/sdk/camera/
+- ImageManipulator - https://docs.expo.dev/versions/latest/sdk/imagemanipulator/
 - Firebase - https://firebase.google.com/
 
 

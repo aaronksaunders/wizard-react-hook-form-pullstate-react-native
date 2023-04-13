@@ -1,4 +1,5 @@
-import { Camera, CameraType, takePictureAsync } from "expo-camera";
+import { Camera, CameraType, FlashMode } from "expo-camera";
+import { manipulateAsync, FlipType, SaveFormat } from "expo-image-manipulator";
 import { useRef, useState } from "react";
 import { StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import { Dialog, Divider, Portal, Button } from "react-native-paper";
@@ -69,9 +70,27 @@ export const CameraComponent = ({ show, hideDialog, onComplete }) => {
    */
   async function doTakePicture() {
     try {
-      const result = await cameraRef.current.takePictureAsync();
+      const result = await cameraRef.current.takePictureAsync({
+        isImageMirror: false,
+      });
       console.log(result);
-      onComplete(result)
+
+      const cropImage = await manipulateAsync(
+        result.uri,
+        [
+          {
+            crop: {
+              originX: result.width / 6,
+              originY: result.height / 4,
+              width: result.width,
+              height: result.width,
+            },
+          },
+        ],
+        {}
+      );
+
+      onComplete(cropImage);
     } catch (error) {
       console.log(error);
     }
@@ -79,7 +98,10 @@ export const CameraComponent = ({ show, hideDialog, onComplete }) => {
 
   return (
     <View style={styles.container}>
-      <Camera style={styles.camera} type={type} ref={cameraRef}></Camera>
+      <Camera style={styles.camera} type={type} ref={cameraRef}
+      flashMode={FlashMode.auto}
+      faceDetectorSettings={{}}
+      ></Camera>
       <View style={styles.buttonContainer}>
         <Button onPress={() => doTakePicture()} mode="outlined">
           Take Picture
