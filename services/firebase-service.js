@@ -4,8 +4,9 @@ import {
   FIREBASE_PROJECT_ID,
   FIREBASE_AUTH_DOMAIN,
   FIREBASE_APP_ID,
+  FIREBASE_STORAGE_BUCKET,
 } from "@env";
-import { getApp, initializeApp } from "firebase/app";
+import { getApp, getApps, initializeApp } from "firebase/app";
 import {
   connectFirestoreEmulator,
   DocumentData,
@@ -16,6 +17,14 @@ import {
   doc,
   getDoc,
 } from "firebase/firestore";
+import {
+  getStorage,
+  uploadBytes,
+  uploadBytesResumable,
+  getDownloadURL,
+  ref,
+  connectStorageEmulator,
+} from "firebase/storage";
 import {
   connectAuthEmulator,
   getAuth,
@@ -33,11 +42,11 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import Constants from "expo-constants";
 
-const firebaseApp = initializeApp({
+let firebaseApp = initializeApp({
   apiKey: FIREBASE_API_KEY,
   authDomain: FIREBASE_AUTH_DOMAIN,
   projectId: FIREBASE_PROJECT_ID,
-  //   storageBucket: FIREBASE_STORAGE_BUCKET,
+  storageBucket: FIREBASE_STORAGE_BUCKET,
   //   messagingSenderId: FIREBASE_MESSAGING_SENDER_ID,
   appId: FIREBASE_APP_ID,
 });
@@ -57,6 +66,8 @@ connectAuthEmulator(auth, `http://${origin}:9099`, {
 export const db = getFirestore(firebaseApp);
 connectFirestoreEmulator(db, `${origin}`, 8080);
 
+connectStorageEmulator(getStorage(),`${origin}`, 9199)
+
 /**
  *
  * @returns
@@ -65,9 +76,72 @@ export const firebaseSignOut = async () => {
   return await signOut(getAuth());
 };
 
+export const firebaseUploadImage = async (userId, uri) => {
+  try {
+    const storageRef = ref(getStorage(), `files/${Date.now()}`);
+    const fileBlob = await uriToBlob(uri);
+    const uploadTask = uploadBytesResumable(storageRef, fileBlob);
+
+    const uploadResp = await new Promise((resolve, reject) => {
+      uploadTask.on(
+        "state_changed",
+        (snapshot) => {
+          const progress = Math.round(
+            (snapshot.bytesTransferred / snapshot.totalBytes) * 100
+          );
+          console.log(progress);
+        },
+        (error) => {
+          reject(error);
+        },
+        async () => {
+          const downloadURL = await getDownloadURL(uploadTask.snapshot.ref);
+          resolve({ downloadURL, snapshot: uploadTask.snapshot.metadata });
+        }
+      );
+    });
+    return uploadResp;
+  } catch (error) {
+    return { error };
+  }
+};
+
+/**
+ *
+ */
+const uriToBlob = (uri) => {
+  return new Promise((resolve, reject) => {
+    const xhr = new XMLHttpRequest();
+    xhr.onload = function () {
+      // return the blob
+      resolve(xhr.response);
+    };
+
+    xhr.onerror = function () {
+      // something went wrong
+      reject(new Error("uriToBlob failed"));
+    };
+    // this helps us get a blob
+    xhr.responseType = "blob";
+    xhr.open("GET", uri, true);
+
+    xhr.send(null);
+  });
+};
+
+/**
+ *
+ * @param {*} userId
+ * @param {*} userInformation
+ * @returns
+ */
 export const firebaseSetUserInformation = async (userId, userInformation) => {
   try {
     const { password, progress, ...infoRest } = userInformation;
+
+    const uploadResp = await firebaseUploadImage(userId, userInformation);
+    console.log(uploadResp);
+
     const docRef = doc(db, "user_profile", userId);
     await setDoc(docRef, infoRest);
     const docData = await getDoc(docRef);

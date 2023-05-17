@@ -9,6 +9,7 @@ import { useIsFocused } from "@react-navigation/native";
 import { RHFTextInput } from "./RHFTextInput";
 import DateTimePickerModal from "react-native-modal-datetime-picker";
 import { CameraComponent } from "./Camera";
+import { firebaseUploadImage } from "../services/firebase-service";
 
 export default function Step1Screen({ navigation }) {
   // keep back arrow from showing
@@ -195,11 +196,17 @@ export default function Step1Screen({ navigation }) {
           <CameraComponent
             show={true}
             hideDialog={() => setShowCamera(false)}
-            onComplete={(result) => {
+            onComplete={async (result) => {
               WizardStore.update((s) => {
                 s.photoInfo = result;
               });
               setShowCamera(false);
+
+
+              // test saving photo
+              console.log('result', result);
+              const uploadResp = await firebaseUploadImage("test-user",result.uri)
+              console.log('uploadResp', uploadResp);
             }}
           />
         </>
